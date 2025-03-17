@@ -1,0 +1,6 @@
+
+# VS Code things
+.vs/
+.vscode/
+
+*.ignore.*
