@@ -1,17 +1,20 @@
+#!/bin/python3
+# -*- coding: utf-8 -*-
+
 # OrcaSlicer to Ultimaker Gcode
 # v2.0.0
 # Created by Drew Wingfield on March 6th, 2025
 
 # Description:
 # This script turns OrcaSlicer's output gcode into Ultimaker-compatible gcode.
-# Tested on Ultimaker S5 and OrcaSlicer v2.2.0
+# Tested on Ultimaker S5, OrcaSlicer v2.2.0, and OrcaSlicer v2.3.0 Release Candidate
 
 # Current issues:
 # 1. The machine heats up both extruders when only one is needed. There seems to be no difference in the gcode???
 # 2. [SOLVED] The "time remaining" display on the machine while printing is broken. It just shows 0m00s
 #      Solve via this script - get the line OrcaSlicer spits out near the bottom "; estimated printing time (normal mode) = 12d 6h 22m 24s", 
 #      do the math to convert it to seconds, then replace it in the header.
-
+# 3. The machine throws an error related to out-of-bounds printing near or at the end of a print.
 
 
 __version__ = "2.0.0"
@@ -20,8 +23,12 @@ import os
 from os import getenv, path
 import sys
 import ntpath
+from dotenv import load_dotenv
 
-DEBUG = False # If true, adds a bunch of info to the gcode file for debug
+load_dotenv()
+
+DEBUG = getenv("DEBUG","False").lower() == "true"
+ERROR_LOG_PATH = getenv("ERROR_LOG_PATH","Errors.log")
 
 START_CODE = ";DREW_ORCASLICER_TO_ULTIMAKER_GCODE_START\n"
 # The start code before the Ultimaker-specific starting code. This does not appear in the final gcode file.
@@ -44,7 +51,7 @@ CUSTOM_FOOTER = """; The below gcode is needed for Ultimakers to recognize the f
 
 
 # Clear the error writer
-with open("orcaslicer_to_ultimaker_gcode_ERRORS.log", "a") as err_writer:
+with open(ERROR_LOG_PATH, "a") as err_writer:
     err_writer.truncate()
 
 
@@ -72,7 +79,7 @@ def convert_to_seconds(total):
 
 
 def write_err(err):
-    with open("orcaslicer_to_ultimaker_gcode_ERRORS.log", "a") as err_writer:
+    with open(ERROR_LOG_PATH, "a") as err_writer:
         err_writer.write(str(err))
         
 
