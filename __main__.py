@@ -17,7 +17,7 @@
 # 3. The machine throws an error related to out-of-bounds printing near or at the end of a print.
 
 
-__version__ = "2.0.0"
+__version__ = "2.0.2"
 
 import os
 from os import getenv, path
@@ -33,7 +33,8 @@ ERROR_LOG_PATH = getenv("ERROR_LOG_PATH","Errors.log")
 START_CODE = ";DREW_ORCASLICER_TO_ULTIMAKER_GCODE_START\n"
 # The start code before the Ultimaker-specific starting code. This does not appear in the final gcode file.
 
-CUSTOM_FOOTER = """; The below gcode is needed for Ultimakers to recognize the file.
+CUSTOM_FOOTER = f";This file was modified by Drew Wingfield's OrcaSlicer to Ultimaker Gcode program, version {__version__}\n"+"""
+; The below gcode is needed for Ultimakers to recognize the file.
 ;End of Gcode
 ;SETTING_3 {"global_quality": "[general]\\\\nversion = 4\\\\nname = FEDC Default\\\\nd
 ;SETTING_3 efinition = ultimaker_s5\\\\n\\\\n[metadata]\\\\ntype = quality_changes\\\\nq
